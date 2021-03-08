@@ -2,7 +2,7 @@ import 'package:pokeapi/model/pokemon/pokemon.dart';
 import 'package:pokeapi/pokeapi.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/pokemonInfo.dart';
+import 'package:pokedex/pokedexInfo/pokemonInfo.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class PokeDex extends StatefulWidget {
@@ -95,10 +95,10 @@ class _Pokedex extends State<PokeDex> {
                                 children: <Widget>[
                                   // Pokemon Name
                                   Container(
-                                    margin: EdgeInsets.only(top: 4, left: 12),
+                                    margin: EdgeInsets.only(top: 8, left: 12),
                                     alignment: Alignment.topLeft,
                                     child: Text(
-                                      "${pokemonList[index].name[0].toUpperCase()}${pokemonList[index].name.substring(1)}", 
+                                      pokemonName(pokemonList[index].name), 
                                       style: TextStyle(
                                         fontSize: 18, 
                                         fontWeight: FontWeight.bold,
@@ -109,15 +109,17 @@ class _Pokedex extends State<PokeDex> {
 
                                   //Pokemon Type
                                   Container(
-                                    width:68,
-                                    margin: EdgeInsets.only(top: 32, left: 8),
+                                    height: 20,
+                                    margin: EdgeInsets.only(top: 32, left: 6),
                                     child: ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: pokemonList[index].types.length,
+                                      scrollDirection: Axis.horizontal,
+                                      shrinkWrap: true,
+                                      itemCount: (pokemonList[index].types.length),
                                       itemBuilder: (BuildContext context, int i) {
                                         return Container(
-                                          margin: EdgeInsets.only(top:4),
-                                          padding: EdgeInsets.only(left:4),
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.only(top:4, left: 4),
+                                          padding: EdgeInsets.only(left:4, right: 4),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(10),
                                             color: Colors.white.withOpacity(0.5),
@@ -138,16 +140,16 @@ class _Pokedex extends State<PokeDex> {
                                   Opacity(
                                     opacity: 0.4,
                                     child: Container(
-                                      alignment: Alignment.centerRight,
-                                      margin: EdgeInsets.only(right:8),
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.only(top:16),
                                       child: Image.asset("assets/pokeball.png", width: 95, height: 95)
                                     )
                                   ),
 
                                   //Pokemon Image
                                   Container(
-                                    alignment: Alignment.centerRight,
-                                    margin: EdgeInsets.only(right:4),
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.only(top:16),
                                     child: Image.network(pokemonList[index].sprites.frontDefault, width: 100, height: 100)
                                   ),
 
@@ -213,7 +215,11 @@ class _Pokedex extends State<PokeDex> {
     );
   }
 
-  String capitalize(String name) {
-    return "${name[0].toUpperCase()}${name.substring(1)}";
+  String pokemonName(String name) {
+    if(name == 'nidoran-f' || name == 'nidoran-m'){
+      return '${name[0].toUpperCase()}${name.substring(1, (name.length - 2))}';
+    }else{
+      return '${name[0].toUpperCase()}${name.substring(1)}';
+    }
   }
 }
