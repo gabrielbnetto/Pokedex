@@ -18,6 +18,7 @@ class _Pokedex extends State<PokeDex> {
   int maxPokes = 20;
   ScrollController _controller;
   bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -73,6 +74,30 @@ class _Pokedex extends State<PokeDex> {
               ),
               child: Column(
                 children: <Widget>[
+                  Container(
+                      child: Form(
+                      key: _formKey,
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: "Filter", 
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.only(top: 15),
+                                  child: Icon(Icons.search),
+                                ),
+                              )
+                            ),
+                          ),
+                          RaisedButton(
+                            onPressed: null,
+                            child: Text("Ok")
+                          )
+                        ]
+                      )
+                    ),
+                  ),
                   Expanded(
                     child: GridView.count(
                       controller: _controller,
@@ -202,7 +227,7 @@ class _Pokedex extends State<PokeDex> {
       ),
        
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: filter,
         tooltip: 'Increment',
         child: Icon(Icons.menu_rounded, size: 30),
       ), 
@@ -221,5 +246,9 @@ class _Pokedex extends State<PokeDex> {
     }else{
       return '${name[0].toUpperCase()}${name.substring(1)}';
     }
+  }
+
+  void filter(){
+    setState((){pokemonList = [pokemonList[0]];});
   }
 }
