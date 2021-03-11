@@ -4,6 +4,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:pokeapi/model/evolution/evolution-chain.dart';
 import 'package:pokeapi/model/evolution/evolution-trigger.dart';
 import 'package:pokeapi/model/pokemon/pokemon.dart';
+import 'package:pokedex/pokedexInfo/StatsPokemon.dart';
 import 'package:pokedex/pokedexInfo/aboutPokemon.dart';
 import '../Utils/TypeColorUtils.dart';
 
@@ -139,12 +140,12 @@ class _PokemonInfo extends State<PokemonInfo> {
                     padding: EdgeInsets.only(left: 4,right: 4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey.withOpacity(0.5),
+                      color: color.typeColor(widget.pokemon.types[index].type.name).withOpacity(0.5),
                     ),
                     child: Text(
                       widget.pokemon.types[index].type.name.toUpperCase(),
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: color.typeColor(widget.pokemon.types[index].type.name),
                         fontWeight: FontWeight.bold
                       ),
                     )
@@ -188,7 +189,7 @@ class _PokemonInfo extends State<PokemonInfo> {
                         ),
                       ),
                       child: Text(
-                        'Base Status',
+                        'Base Stats',
                         style: (selectedTab == 1)
                         ? TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)
                         : TextStyle(fontSize: 16, color: Colors.grey)
@@ -254,8 +255,7 @@ class _PokemonInfo extends State<PokemonInfo> {
             ),
 
             Container(
-              margin: EdgeInsets.only(top: 8), 
-              height:5000,
+              margin: EdgeInsets.only(top: 8, bottom: 8),
               child: buildPokemonInfo()
             )
           ],
@@ -275,7 +275,9 @@ class _PokemonInfo extends State<PokemonInfo> {
   buildPokemonInfo(){
     switch (selectedTab){
       case 0:
-        return AboutPokemon(widget.pokemon);
+        return AboutPokemon(widget.pokemon.sprites, widget.pokemon.gameIndices, widget.pokemon.name);
+      case 1:
+        return StatsPokemon(widget.pokemon.stats, widget.pokemon.types);
     }
   }
 }

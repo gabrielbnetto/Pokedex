@@ -14,7 +14,7 @@ class TypeColorUtils {
       case 'grass':
         return Colors.green;
       case 'electric':
-        return Colors.yellow;
+        return Colors.yellow[700];
       case 'ice':
         return HexColor('#41f4fa');
       case 'fighting':

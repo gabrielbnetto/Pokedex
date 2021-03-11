@@ -27,6 +27,7 @@ dependencies:
   pokeapi: ^1.0.1
   flutter_svg: ^0.18.0
   hexcolor: ^1.0.6
+  fl_chart: ^0.12.3
 
 
 dev_dependencies:
