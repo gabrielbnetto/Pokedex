@@ -9,8 +9,9 @@ import 'package:pokedex/Utils/TypeColorUtils.dart';
 class StatsPokemon extends StatefulWidget {
   final List<Stats> stats;
   final List<Types> types;
+  final int baseExperience;
 
-  StatsPokemon(this.stats, this.types, {Key key}) : super(key: key);
+  StatsPokemon(this.stats, this.types, this.baseExperience, {Key key}) : super(key: key);
 
   @override
   _StatsPokemon createState() => _StatsPokemon();
@@ -29,7 +30,6 @@ class _StatsPokemon extends State<StatsPokemon> {
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           color: color.typeColor(widget.types[0].type.name),
-          // color: Colors.white,
           child: Stack(
             children: <Widget>[
               Padding(
@@ -48,9 +48,9 @@ class _StatsPokemon extends State<StatsPokemon> {
                       height: 4,
                     ),
                     Text(
-                      'Only considering Pokemon Games until 2012',
+                      'Base Experience: ' + widget.baseExperience.toString(),
                       style: TextStyle(
-                          color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                          color: Colors.white, fontSize: 18),
                     ),
                     const SizedBox(
                       height: 38,
@@ -103,24 +103,14 @@ class _StatsPokemon extends State<StatsPokemon> {
     );
   }
 
-  List<BarChartGroupData> showingGroups() => List.generate(6, (i) {
-        switch (i) {
-          case 0:
-            return makeGroupData(0, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
-          case 1:
-            return makeGroupData(1, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
-          case 2:
-            return makeGroupData(2, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
-          case 3:
-            return makeGroupData(3, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
-          case 4:
-            return makeGroupData(4, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
-          case 5:
-            return makeGroupData(5, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
-          default:
-            return null;
-        }
-      });
+  List<BarChartGroupData> showingGroups() {
+    List<BarChartGroupData> groups = [];
+    for (var i = 0; i < widget.stats.length; i++){
+      BarChartGroupData barChartGroupData = makeGroupData(i, widget.stats[i].baseStat.toDouble(), isTouched: i == touchedIndex);
+      groups.add(barChartGroupData);
+    }
+    return groups;
+  }
 
   BarChartData mainBarData() {
     return BarChartData(
