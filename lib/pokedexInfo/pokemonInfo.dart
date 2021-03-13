@@ -277,7 +277,7 @@ class _PokemonInfo extends State<PokemonInfo> {
       case 0:
         return AboutPokemon(widget.pokemon.sprites, widget.pokemon.gameIndices, widget.pokemon.name);
       case 1:
-        return StatsPokemon(widget.pokemon.stats, widget.pokemon.types);
+        return StatsPokemon(widget.pokemon.stats, widget.pokemon.types, widget.pokemon.baseExperience);
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:pokeapi/model/pokemon/pokemon.dart';
 import 'package:pokeapi/pokeapi.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex/filterPokemonService.dart';
 import 'package:pokedex/pokedexInfo/pokemonInfo.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -14,10 +15,14 @@ class PokeDex extends StatefulWidget {
 
 class _Pokedex extends State<PokeDex> {
   List<Pokemon> pokemonList = [];
+  List<Pokemon> firstPagePokemons = [];
   int minPokes = 1;
   int maxPokes = 20;
   ScrollController _controller;
   bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+  FilterPokemonService filterService = new FilterPokemonService();
+  final _filterController = TextEditingController();
 
   @override
   void initState() {
@@ -29,6 +34,7 @@ class _Pokedex extends State<PokeDex> {
   @override
   void dispose() {
     _controller.dispose();
+    _filterController.dispose();
     super.dispose();
   }
 
@@ -62,7 +68,8 @@ class _Pokedex extends State<PokeDex> {
         builder: (context, snapshot) {
           if(snapshot.hasData){
             if(pokemonList.length == 0){
-              snapshot.data.forEach((e) => pokemonList.add(e));  
+              snapshot.data.forEach((e) => pokemonList.add(e));
+              snapshot.data.forEach((e) => firstPagePokemons.add(e));
             }
             return Container(
               decoration: BoxDecoration(
@@ -73,6 +80,72 @@ class _Pokedex extends State<PokeDex> {
               ),
               child: Column(
                 children: <Widget>[
+                  Container(
+                    height: 40,
+                    margin: EdgeInsets.only(top: 4, bottom: 4, left: 8),
+                      child: Form(
+                      key: _formKey,
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              autofocus: false,
+                              onChanged: (e){setState(() {});},
+                              controller: _filterController,
+                              decoration: InputDecoration(
+                                hintText: "Filter",
+                                filled: true,
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.only(top: 4),
+                                  child: Icon(Icons.search, color: Colors.grey),
+                                ),
+                                suffixIcon: Container(
+                                  padding: EdgeInsets.only(top: 2),
+                                  child: IconButton(icon: Icon(Icons.cancel), color: Colors.grey, onPressed: cancelFilter),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.white),
+                                  borderRadius: new BorderRadius.circular(10),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.white),
+                                  borderRadius: new BorderRadius.circular(10),
+                                ),
+                                fillColor: Colors.white
+                              )
+                            ),
+                          ),
+                          Container(
+                            height: 40,
+                            width: 80,
+                            margin: EdgeInsets.only(left: 8, right: 8),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),  color: Colors.red),
+                            child: ElevatedButton(
+                              onPressed: (){
+                                filter().then((e){
+                                  if(e){
+                                    final snackBar = SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('Ocorreu um erro ao filtrar!'),
+                                      duration: Duration(seconds: 3),
+                                      action: SnackBarAction(
+                                        label: 'OK',
+                                        textColor: Colors.white,
+                                        onPressed: () {}
+                                      ),
+                                    );
+                                    Scaffold.of(context).showSnackBar(snackBar);
+                                  }
+                                });
+                              },
+                              style: ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith(getColor)),
+                              child: Text("Ok", style: TextStyle(color: Colors.white))
+                            )
+                          )
+                        ]
+                      )
+                    ),
+                  ),
                   Expanded(
                     child: GridView.count(
                       controller: _controller,
@@ -221,5 +294,60 @@ class _Pokedex extends State<PokeDex> {
     }else{
       return '${name[0].toUpperCase()}${name.substring(1)}';
     }
+  }
+
+  filter() async{
+    if(_filterController.value.text.isNotEmpty){
+      setState(() {
+        FocusScope.of(context).unfocus();
+        pokemonList = [];
+        _isLoading = true;
+      });
+      try{
+        Pokemon onePokemon = await filterService.getPokemon(_filterController.value.text.toLowerCase());
+        setState(() {
+          pokemonList = [onePokemon];
+          _isLoading = false;
+        });
+        return false;
+      }catch(e){
+        setState(() {
+          _isLoading = false;
+        });
+        return true;
+      }
+    }
+  }
+
+  void cancelFilter(){
+    if(_filterController.value.text.isNotEmpty){
+      if(pokemonList.length == 1){
+        pokemonList = [];
+        setState(() {
+          firstPagePokemons.forEach((e) => pokemonList.add(e));
+          FocusScope.of(context).unfocus();
+          if(_filterController.value.text.length > 0){
+            _filterController.clear();
+          }
+        });
+      }else{
+        setState(() {
+          _filterController.clear();
+          FocusScope.of(context).unfocus();
+        });
+      }
+    }
+  }
+
+  Color getColor(Set<MaterialState> states) {
+    const Set<MaterialState> interactiveStates = <MaterialState>{
+      MaterialState.pressed,
+      MaterialState.hovered,
+      MaterialState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Colors.red;
+    }
+    return Colors.red;
   }
 }
