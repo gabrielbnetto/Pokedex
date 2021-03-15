@@ -4,7 +4,7 @@ import 'package:hexcolor/hexcolor.dart';
 
 class TypeColorUtils {
   typeColor(String type){
-    switch (type){
+    switch (type.toLowerCase()){
       case 'normal':
         return Colors.grey;
       case 'fire':

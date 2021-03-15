@@ -2,7 +2,7 @@ import 'package:pokeapi/model/pokemon/pokemon.dart';
 import 'package:pokeapi/pokeapi.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/filterPokemonService.dart';
+import 'package:pokedex/getPokemonService.dart';
 import 'package:pokedex/pokedexInfo/pokemonInfo.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -21,7 +21,7 @@ class _Pokedex extends State<PokeDex> {
   ScrollController _controller;
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
-  FilterPokemonService filterService = new FilterPokemonService();
+  GetOnePokemonService filterService = new GetOnePokemonService();
   final _filterController = TextEditingController();
 
   @override
@@ -80,6 +80,7 @@ class _Pokedex extends State<PokeDex> {
               ),
               child: Column(
                 children: <Widget>[
+                  //Filter
                   Container(
                     height: 40,
                     margin: EdgeInsets.only(top: 4, bottom: 4, left: 8),
@@ -96,13 +97,12 @@ class _Pokedex extends State<PokeDex> {
                                 hintText: "Filter",
                                 filled: true,
                                 prefixIcon: Padding(
-                                  padding: EdgeInsets.only(top: 4),
+                                  padding: EdgeInsets.only(top: 2),
                                   child: Icon(Icons.search, color: Colors.grey),
                                 ),
-                                suffixIcon: Container(
-                                  padding: EdgeInsets.only(top: 2),
+                                suffixIcon: (_filterController.value.text.length > 0) ? Container(
                                   child: IconButton(icon: Icon(Icons.cancel), color: Colors.grey, onPressed: cancelFilter),
-                                ),
+                                ) : Container(width: 1),
                                 enabledBorder: UnderlineInputBorder(
                                   borderSide: new BorderSide(color: Colors.white),
                                   borderRadius: new BorderRadius.circular(10),
@@ -123,7 +123,7 @@ class _Pokedex extends State<PokeDex> {
                             child: ElevatedButton(
                               onPressed: (){
                                 filter().then((e){
-                                  if(e){
+                                  if(e != false){
                                     final snackBar = SnackBar(
                                       backgroundColor: Colors.red,
                                       content: Text('Ocorreu um erro ao filtrar!'),
@@ -146,6 +146,7 @@ class _Pokedex extends State<PokeDex> {
                       )
                     ),
                   ),
+                  //List
                   Expanded(
                     child: GridView.count(
                       controller: _controller,
@@ -257,6 +258,11 @@ class _Pokedex extends State<PokeDex> {
                     : Container()
                 ]
               )
+            );
+          }else if(snapshot.hasError){
+            return Container(
+              color: Colors.white,
+              child: Text(snapshot.error.toString(), style: TextStyle(fontSize: 16, color: Colors.black),)
             );
           }else{
             return Container(
