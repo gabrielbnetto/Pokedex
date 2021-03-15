@@ -38,7 +38,7 @@ class _AboutPokemon extends State<AboutPokemon> {
                   margin: EdgeInsets.only(top: 8, bottom: 8),
                   child: Text(
                     'Pokemon Shiny Version', 
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                   )
                 ),
                 Row(

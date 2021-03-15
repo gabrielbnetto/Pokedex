@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:pokeapi/model/evolution/evolution-chain.dart';
-import 'package:pokeapi/model/evolution/evolution-trigger.dart';
 import 'package:pokeapi/model/pokemon/pokemon.dart';
 import 'package:pokedex/pokedexInfo/StatsPokemon.dart';
 import 'package:pokedex/pokedexInfo/aboutPokemon.dart';
+import 'package:pokedex/pokedexInfo/pokemonType.dart';
 import '../Utils/TypeColorUtils.dart';
 
 class PokemonInfo extends StatefulWidget {
@@ -24,6 +23,7 @@ class _PokemonInfo extends State<PokemonInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: HexColor('#ff0000'),
         title: Text('Pokemon Details'),
@@ -34,10 +34,12 @@ class _PokemonInfo extends State<PokemonInfo> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
+              alignment: Alignment.center,
               children: [
                 //Background Image
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.36,
+                  margin: EdgeInsets.only(bottom: 18),
+                  height: MediaQuery.of(context).size.height * 0.42,
                   decoration: BoxDecoration(
                     color: HexColor('#d4ebf2'),
                     image: DecorationImage(
@@ -49,8 +51,8 @@ class _PokemonInfo extends State<PokemonInfo> {
 
                 //White Rounded Container
                 Container(
-                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.32),
-                  height: 28,
+                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.40),
+                  height: 34,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -64,21 +66,20 @@ class _PokemonInfo extends State<PokemonInfo> {
                 Center(
                   child:Container(
                     width: 300,
-                    padding: EdgeInsets.only(top: 154),
+                    padding: EdgeInsets.only(top: 100),
                     child: Image.asset('assets/shadowPokemon.png'),
                   )
                 ),
 
                 //Pokemon Image
                 Container(
-                  height: (widget.pokemon.name != 'bulbasaur') 
-                    ? MediaQuery.of(context).size.height * 0.38
-                    : MediaQuery.of(context).size.height * 0.40,
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     height: 200,
                     width: 200,
-                    margin: EdgeInsets.only(right:4),
+                    margin: (widget.pokemon.name != 'bulbasaur') 
+                      ? EdgeInsets.only(right:4, top: 18)
+                      : EdgeInsets.only(right:4, top: 38),
                     decoration: new BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(widget.pokemon.sprites.frontDefault),
@@ -207,7 +208,7 @@ class _PokemonInfo extends State<PokemonInfo> {
                         ),
                       ),
                       child: Text(
-                        'Evolution',
+                        'Type Str/Weak',
                         style: (selectedTab == 2)
                         ? TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)
                         : TextStyle(fontSize: 16, color: Colors.grey)
@@ -225,26 +226,8 @@ class _PokemonInfo extends State<PokemonInfo> {
                         ),
                       ),
                       child: Text(
-                        'Weakness',
-                        style: (selectedTab == 3)
-                        ? TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)
-                        : TextStyle(fontSize: 16, color: Colors.grey)
-                      )
-                    )
-                  ),
-                  GestureDetector(
-                    onTap: () { setState(() {selectedTab = 4;}); },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border(
-                            bottom: (selectedTab == 4)
-                            ? BorderSide(width: 2.0, color: color.typeColor(widget.pokemon.types[0].type.name))
-                            : BorderSide(color: Colors.white)
-                        ),
-                      ),
-                      child: Text(
                         'Moves',
-                        style: (selectedTab == 4)
+                        style: (selectedTab == 3)
                         ? TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)
                         : TextStyle(fontSize: 16, color: Colors.grey)
                       )
@@ -278,6 +261,8 @@ class _PokemonInfo extends State<PokemonInfo> {
         return AboutPokemon(widget.pokemon.sprites, widget.pokemon.gameIndices, widget.pokemon.name);
       case 1:
         return StatsPokemon(widget.pokemon.stats, widget.pokemon.types, widget.pokemon.baseExperience);
+      case 2:
+        return PokemonType(widget.pokemon.types[0].type.name);  
     }
   }
 }
